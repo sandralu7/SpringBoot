@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<table th:fragment="fichasUsuario" class="d-none">
+
+<tbody id="plantillaFichasUsuario">
+<tr id="row_{ID}">
+<td class="d-none"><input type="hidden" value="{ID}" name="ficha_id[]"/></td>
+<td>{NOMBRE}</td>
+<td>{DESCRIPCION}</td>
+<td>{DIFICULTAD}</td>
+<td><input type="number" value="1" name="cantidad[]" id="cantidad_{ID}" class="form-control col-sm-4" onchange="fichasHelper.calcularRepetidas({ID},this.value);"/></td>
+<td><span id="repetidas_{ID}">0</span></td>
+<td><a href="#" class="btn btn-danger btn-xs" onclick="fichasHelper.eliminarFicha({ID});"> X</a></td>
+</tr>
+
+</tbody>
+
+</table>
+
+</body>
+</html>

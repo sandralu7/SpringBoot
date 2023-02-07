@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout :: head"></head>
+<body>
+
+	<header th:replace="layout/layout :: header"></header>
+	<div class="container py-4">
+
+		<div class="card bg-light">
+			<div class="card-header" th:text="${titulo}"></div>
+			<div class="card-body">
+
+				<h4 class="card-title">
+					<a th:href="@{'/ver/'} + ${albumUsuario.usuario.id}"
+						class="btn btn-light btn-xs"> &laquo; Volver</a>
+					<a class="btn btn-danger btn-xs float-right mx-2" th:href="@{'/album/ver/' + ${albumUsuario.idAlbumUsuario}(format=pdf)}">Exportar a PDF</a>
+					<a class="btn btn-success btn-xs float-right" th:href="@{'/album/ver/' + ${albumUsuario.idAlbumUsuario}(format=xlsx)}">Exportar a XLS</a>
+				</h4>
+				<ul class="list-group my-2">
+					<li class="list-group-item list-group-item-primary"
+						th:text="'Datos del Usuario'"></li>
+					<li class="list-group-item" th:text="${albumUsuario.usuario}"></li>
+					<li class="list-group-item" th:text="${albumUsuario.usuario.email}"></li>
+				</ul>
+				<ul class="list-group">
+					<li class="list-group-item list-group-item-success"
+						th:text="'Datos del album'"></li>
+					<li class="list-group-item"
+						th:text="'Album: '+ ${albumUsuario.album.nombre}"></li>
+					<li class="list-group-item"
+						th:text="'Cantidad Fichas: '+ ${albumUsuario.album.cantidadFichas}"></li>
+					<li class="list-group-item"
+						th:text="'Fecha: '+ ${albumUsuario.album.createAt}"></li>
+				</ul>
+				
+				<div class="alert alert-info my-4" th:if="${#lists.isEmpty(albumUsuario.listaFichasAlbumPorUsuario)}" th:text="'No hay fichas para el album: ' + ${albumUsuario.album.nombre}"></div>
+				<table th:if="${not #lists.isEmpty(albumUsuario.listaFichasAlbumPorUsuario)}" class="table table-striped table-hover table-bordered my-3">
+				<thead>
+				<tr>
+						<th>Nombre</th>
+						<th>Descripcion</th>
+						<th>Dificultad</th>
+						<th>Cantidad</th>
+						<th>Repetidas</th>
+						<th>Eliminar</th>
+			
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="ficha: ${albumUsuario.listaFichasAlbumPorUsuario}">
+					<td th:text="${ficha.ficha.nombre}"></td>
+					<td th:text="${ficha.ficha.descripcion}"></td>
+					<td th:text="${ficha.ficha.dificultad}"></td>
+					<td th:text="${ficha.calcularTotal()}"></td>
+					<td th:text="${ficha.repetidas}"></td>
+					<td><a class="btn btn-danger btn-xs" th:href="@{'/album/eliminarf/'} + ${ficha.idFichaAlbumUsuario}" th:text="'eliminar'" 
+								onclick="return confirm('¿Esta seguro de eliminar una ficha?');"></a></td>
+				</tr>
+				</tbody>
+				</table>
+				
+				<h5 th:if="${not #lists.isEmpty(albumUsuario.listaFichasAlbumPorUsuario)}" class="float-right">Gran total<span th:text="${albumUsuario.listaFichasAlbumPorUsuario.size()}" class="badge badge-secondary"></span></h5>
+				<div>
+					<div class="card border-info mb-4" style="max-width:20rem;">
+					<div class="card-header">Observaciones</div>
+					<div class="card-body">
+						<p class="card-text" th:text="${albumUsuario.nivel}" th:if="${not #strings.isEmpty(albumUsuario.nivel)}"></p>
+						<h4 class="card-title" th:if="${#strings.isEmpty(albumUsuario.nivel)}" th:text="'No se ha calculado el nivel'"></h4>
+					</div>
+					</div>
+				</div>
+				
+				<a th:href="@{'/ver/'} + ${albumUsuario.usuario.id}"
+						class="btn btn-light btn-xs"> &laquo; Volver</a>
+			</div>
+		</div>
+	</div>
+	<footer th:replace="layout/layout :: footer"></footer>
+	<script th:replace="album/js/autocomplete-fichas :: javascript"></script>
+</body>
+
+</html>

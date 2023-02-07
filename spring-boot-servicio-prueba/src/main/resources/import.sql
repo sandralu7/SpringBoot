@@ -1,0 +1,1 @@
+INSERT INTO operaciones (num1, num2, timestamp, code, description, result_list, status, path, error, exception) VALUES (1,15, NOW(),'001', 'se encontraron múltiplos de 3 y de 5', '1,2,Fizz,4,Buzz,Fizz,7,8,Fizz,Buzz,11,Fizz,13,14,FizzBuzz', 200, '/intraway/api/fizzbuzz/1/15', 'false', 'No')

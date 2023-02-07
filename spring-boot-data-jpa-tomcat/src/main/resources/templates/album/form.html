@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/layout :: head"></head>
+<body>
+
+	<header th:replace="layout/layout :: header"></header>
+	<div class="container py-4">
+
+		<div class="card bg-light">
+			<div class="card-header" th:text="${titulo}"></div>
+			<div class="card-body">
+			
+				<h4 class="card-title">
+				<a class="btn btn-light btn-xs"	 th:href="@{/ver/} + ${usuario2.id}" th:text="'&laquo; Volver'"></a>
+				</h4>
+				<form th:action="@{/album/form/}" th:object="${usuario2}"
+					method="post">
+					<div class="form-group row">
+						<label for="usuario" class="col-sm-2 col-form-label" th:text="'Usuario'"></label>
+						<div class="col-sm-6">
+							<input name="usuario" 
+								th:value="${usuario2.nombre} +  ' ' + ${usuario2.apellido}"
+								class="form-control" disabled='disabled' />
+						
+						</div>	
+				
+					</div>
+					
+					
+					<div class="form-group row">
+						<label class="col-sm-2 col-form-label" for="albums">Albums</label>
+						<div class="col-sm-6">
+							<select id="album" th:field="${album}">
+								<option value="">---Seleccionar---</option>
+								<option th:each="album: ${albums}" th:text="${album.nombre}"
+									th:value="${album.id}"></option>
+							</select>
+						</div>
+						<!--  <div th:if="${#fields.hasErrors('album')}" th:errors="*{album}"></div>-->
+					</div>
+					
+					<div class="form-group row">
+						<label for="buscar_ficha" class="col-sm-2 col-form-label"
+							th:text="'Buscar Ficha'"></label>
+						<div class="col-sm-6">
+							<input type="text" name="buscar_ficha" id="buscar_ficha" class="form-control"/>
+						</div>
+					</div>
+					<table th:replace="album/plantilla-fichas :: fichasUsuario"></table>
+					<table id="cargarFichasAlbum" class="table table-sm table-striped table-hover">
+					<thead>
+					<tr>
+						<th>Nombre</th>
+						<th>Descripcion</th>
+						<th>Dificultad</th>
+						<th>Cantidad</th>
+						<th>Repetidas</th>
+						<th>Eliminar</th>
+						
+					</tr>
+					
+					</thead>
+					<tbody></tbody>
+					</table>
+					<h5>Total Repetidas<span class="badge badge-secondary" id="gran_total">0</span></h5>
+					<div class="form-group row">
+						<div class="col-sm-6">
+							<input type="submit" th:value="${titulo}"
+								class="btn btn-secondary" />
+						</div>
+					</div>
+				</form>
+
+
+			</div>
+		</div>
+	</div>
+	<footer th:replace="layout/layout :: footer"></footer>
+	<!-- Esto pasa la ruta completa del recurso a autocomplete fichas para cuando se despliega en un servidor externo  -->
+	<input type="hidden" id="urlAjax" th:value="@{'/album/cargar-fichas/'}"/>
+	<script th:replace="album/js/autocomplete-fichas :: javascript"></script>
+</body>
+
+</html>

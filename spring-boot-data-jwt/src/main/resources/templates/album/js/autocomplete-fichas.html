@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<script type="text/javascript" th:fragment="javascript">
+$(document).ready(function(){
+	
+	$("#buscar_ficha").autocomplete({
+		
+		source: function(request, response){
+			$.ajax({
+				url: "/album/cargar-fichas/" + request.term,
+				dataType: "json",
+				data: {
+					term: request.term
+				},
+				success:function (data) 	{
+					response($.map(data,function(item){
+							return{
+								value: item.id,
+								label: item.nombre,
+								dificultad: item.dificultad,
+							};
+					}));
+					
+				},
+			});
+		},
+		select: function(event, ui){
+			//$("#buscar_ficha").val(ui.item.label);
+			
+			if(fichasHelper.hasFicha(ui.item.value)){
+				fichasHelper.incrementaCantidad(ui.item.value);
+				return false;
+			}
+			
+			//Obtiene el contenido html
+			var linea = $("#plantillaFichasUsuario").html();
+			linea = linea.replace(/{ID}/g, ui.item.value);
+			linea = linea.replace(/{NOMBRE}/g, ui.item.label);
+			linea = linea.replace(/{DESCRIPCION}/g, ui.item.label);
+			linea = linea.replace(/{DIFICULTAD}/g, ui.item.dificultad);
+			
+			$("#cargarFichasAlbum tbody").append(linea);
+			fichasHelper.calcularRepetidas(ui.item.id,1);
+			return false;
+		}
+	});
+	$("form").submit(function(){
+		$("#plantillaFichasUsuario").remove();
+		return;
+	});
+});
+
+var fichasHelper = {
+		calcularRepetidas: function (id, cantidad){
+			
+			$("#repetidas_"+id).html(parseInt(cantidad) - 1);
+			this.calcularGranTotal();
+		},
+		hasFicha: function (id){
+			
+			var resultado = false;
+			$('input[name="ficha_id[]"]').each(function(){
+					if(parseInt(id) == parseInt($(this).val())){
+						resultado = true;
+					}
+				
+			});
+			return resultado;
+		},
+		incrementaCantidad: function (id){
+			var cantidad = $("#cantidad_" + id).val() ? parseInt($("#cantidad_" + id).val()) : 0;
+			$("#cantidad_" + id).val(++cantidad);
+			this.calcularRepetidas(id, cantidad);
+		},
+		eliminarFicha: function(id){
+			$("#row_" + id).remove();
+			this.calcularGranTotal();
+		},
+		calcularGranTotal: function(){
+			var total=0;
+			
+			$('span[id^="repetidas_"]').each( function (){
+				total +=parseInt($(this).html());
+			});
+			
+			$('#gran_total').html(total);
+		}
+		
+}
+</script>
+</body>
+</html>
